@@ -8,12 +8,14 @@ ENTRYPOINT ["ffmpeg"]
 WORKDIR /work
 
 ENV TARGET_VERSION=3.2.2 \
-    PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
+    LIBVA_VERSION=1.7.3 \
+    LIBDRM_VERSION=2.4.70 \
+    SRC=/usr \
+    PKG_CONFIG_PATH=/usr/lib/pkgconfig
 
 RUN yum install -y --enablerepo=extras epel-release yum-utils && \
-    # Install vaapi
-    yum-config-manager --add-repo=http://negativo17.org/repos/epel-multimedia.repo && \
-    yum install -y libva libva-devel libva-intel-driver && \
+    # Install libdrm
+    yum install -y libdrm libdrm-devel && \
     # Install build dependencies
     build_deps="automake autoconf bzip2 \
                 cmake freetype-devel gcc \
@@ -21,14 +23,29 @@ RUN yum install -y --enablerepo=extras epel-release yum-utils && \
                 mercurial nasm pkgconfig \
                 yasm zlib-devel" && \
     yum install -y ${build_deps} && \
+    # Build libva
+    DIR=$(mktemp -d) && cd ${DIR} && \
+    curl -sL https://www.freedesktop.org/software/vaapi/releases/libva/libva-${LIBVA_VERSION}.tar.bz2 | \
+    tar -jx --strip-components=1 && \
+    ./configure CFLAGS=' -O2' CXXFLAGS=' -O2' --prefix=${SRC} && \
+    make && make install && \
+    rm -rf ${DIR} && \
+    # Build libva-intel-driver
+    DIR=$(mktemp -d) && cd ${DIR} && \
+    curl -sL https://www.freedesktop.org/software/vaapi/releases/libva-intel-driver/libva-intel-driver-${LIBVA_VERSION}.tar.bz2 | \
+    tar -jx --strip-components=1 && \
+    ./configure && \
+    make && make install && \
+    rm -rf ${DIR} && \
     # Build ffmpeg
     DIR=$(mktemp -d) && cd ${DIR} && \
     curl -sL http://ffmpeg.org/releases/ffmpeg-${TARGET_VERSION}.tar.gz | \
     tar -zx --strip-components=1 && \
     ./configure \
-        --enable-nonfree \
+        --prefix=${SRC} \
         --enable-small \
         --enable-gpl \
+        --enable-vaapi \
         --disable-doc \
         --disable-debug && \
     make && make install && \
