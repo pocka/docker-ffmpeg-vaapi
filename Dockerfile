@@ -7,9 +7,9 @@ ENTRYPOINT ["ffmpeg"]
 
 WORKDIR /work
 
-ENV TARGET_VERSION=3.2.2 \
-    LIBVA_VERSION=1.7.3 \
-    LIBDRM_VERSION=2.4.70 \
+ENV TARGET_VERSION=3.3 \
+    LIBVA_VERSION=1.8.1 \
+    LIBDRM_VERSION=2.4.80 \
     SRC=/usr \
     PKG_CONFIG_PATH=/usr/lib/pkgconfig
 
@@ -32,7 +32,7 @@ RUN yum install -y --enablerepo=extras epel-release yum-utils && \
     rm -rf ${DIR} && \
     # Build libva-intel-driver
     DIR=$(mktemp -d) && cd ${DIR} && \
-    curl -sL https://www.freedesktop.org/software/vaapi/releases/libva-intel-driver/libva-intel-driver-${LIBVA_VERSION}.tar.bz2 | \
+    curl -sL https://www.freedesktop.org/software/vaapi/releases/libva-intel-driver/intel-vaapi-driver-${LIBVA_VERSION}.tar.bz2 | \
     tar -jx --strip-components=1 && \
     ./configure && \
     make && make install && \
