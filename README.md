@@ -1,5 +1,9 @@
 # docker-ffmpeg-vaapi
 
+ffmpeg container with VAAPI.
+
+Recommended: use 3.x kernel. May not works on latest kernel.
+
 ## Install
 
 ```sh
