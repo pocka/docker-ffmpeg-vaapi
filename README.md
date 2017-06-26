@@ -1,10 +1,12 @@
 # docker-ffmpeg-vaapi
 
-ffmpeg container with VAAPI.
+This repository contains a docker image for FFmpeg with VAAPI.
 
-Recommended: use 3.x kernel. May not works on latest kernel.
+**Recommended**: Use 3.x kernel. This image might not work on the newer kernel.
 
 ## Install
+
+Pull the image from DockerHub.
 
 ```sh
 docker pull pocka/ffmpeg-vaapi
@@ -12,26 +14,22 @@ docker pull pocka/ffmpeg-vaapi
 
 ## Example
 
-+ input:  `/data/test-input.ts`
-+ output: `/data/test-out.mp4`
+This example shows you the case:
+Convert MPEG2-TS(`input.ts`) to MP4(H.264)(`output.mp4`) and scale it to 1280x720.
 
 ```sh
 docker run \
   --privileged \
   -v /dev/dri:/dev/dri \
-  -v /data:/data \
+  -v `pwd`:/data \
   pocka/ffmpeg-vaapi \
     -vaapi_device /dev/dri/renderD128 \
     -hwaccel vaapi \
     -hwaccel_output_format vaapi \
-    -i /data/test-input.ts \
+    -i input.ts \
     -vf 'format=nv12|vaapi,hwupload,scale_vaapi=w=1280:h=720' \
-    -level 41 \
     -c:v h264_vaapi \
-    -aspect 16:9 \
-    -qp 23 \
-    -c:a copy \
-    -movflags faststart \
-    -vsync 1 \
-    /data/test-out.mp4
+    output.mp4
 ```
+
+For more detail of VAAPI option, see [Livav's document](https://wiki.libav.org/Hardware/vaapi).
