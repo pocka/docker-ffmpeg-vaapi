@@ -1,7 +1,6 @@
 FROM centos:7.3.1611
 MAINTAINER Sho Fuji <pockawoooh@gmail.com>
 
-
 CMD ["--help"]
 ENTRYPOINT ["ffmpeg"]
 
@@ -19,8 +18,7 @@ RUN yum install -y --enablerepo=extras epel-release yum-utils && yum clean all
 RUN yum install -y libdrm libdrm-devel && yum clean all
 
 # Install build dependencies
-ARG BUILD_DEPS="automake autoconf bzip2 cmake freetype-devel gcc gcc-c++ git libtool make mercurial nasm yasm zlib-devel"
-RUN yum install -y ${BUILD_DEPS} && yum clean all
+RUN yum install -y automake autoconf bzip2 cmake freetype-devel gcc gcc-c++ git libtool make mercurial nasm yasm zlib-devel && yum clean all
 
 # Build libva
 RUN DIR=$(mktemp -d) && cd ${DIR} && \
@@ -55,10 +53,5 @@ RUN DIR=$(mktemp -d) && cd ${DIR} && \
     hash -r && \
     rm -rf ${DIR} 
 
-#RUN yum history
-RUN yum history -y undo last && yum clean all
-
-RUN whereis libva && whereis libva.so.1
-RUN ldd /usr/bin/ffmpeg
 RUN ffmpeg -buildconf
 
