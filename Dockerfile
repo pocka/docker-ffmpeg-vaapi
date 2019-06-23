@@ -54,5 +54,3 @@ RUN DIR=$(mktemp -d) && cd ${DIR} && \
     hash -r && \
     rm -rf ${DIR} 
 
-RUN ffmpeg -buildconf
-
