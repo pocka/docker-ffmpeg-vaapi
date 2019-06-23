@@ -13,6 +13,9 @@ ARG PKG_CONFIG_PATH=/usr/lib/pkgconfig
 # Enable repos
 RUN yum install -y --enablerepo=extras epel-release yum-utils && yum clean all
 
+# Upgrade OS
+RUN yum upgrade -y && yum clean all
+
 # Install libdrm
 ARG LIBDRM_VERSION=2.4.91
 RUN yum install -y libdrm-${LIBDRM_VERSION} libdrm-devel-${LIBDRM_VERSION} && yum clean all
