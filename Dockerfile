@@ -51,6 +51,8 @@ RUN yum install -y ${BUILD_DEPS} && \
     hash -r && \
     # Cleanup build dependencies and temporary files
     rm -rf ${DIR} && \
-    yum history -y undo last && \
+#    yum history -y undo last && \
+    yum erase -y ${BUILD_DEPS} && \
     yum clean all && \
     ffmpeg -buildconf
+
