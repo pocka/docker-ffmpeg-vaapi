@@ -20,24 +20,27 @@ RUN yum install -y libdrm libdrm-devel && yum clean all
 
 # Install build dependencies
 ARG BUILD_DEPS="automake autoconf bzip2 cmake freetype-devel gcc gcc-c++ git libtool make mercurial nasm yasm zlib-devel"
-RUN yum install -y ${BUILD_DEPS} && \
-    yum clean all && \
-    # Build libva
-    DIR=$(mktemp -d) && cd ${DIR} && \
+RUN yum install -y ${BUILD_DEPS} && yum clean all
+
+# Build libva
+RUN DIR=$(mktemp -d) && cd ${DIR} && \
     curl -sL https://www.freedesktop.org/software/vaapi/releases/libva/libva-${LIBVA_VERSION}.tar.bz2 | \
     tar -jx --strip-components=1 && \
-    ./configure CFLAGS=' -O2' CXXFLAGS=' -O2' --prefix=${SRC} && \
+#    ./configure --help && exit 1 && \
+    ./configure CFLAGS=' -O2' CXXFLAGS=' -O2' --prefix=${SRC} --libdir=/usr/lib64 && \
     make && make install && \
-    rm -rf ${DIR} && \
-    # Build libva-intel-driver
-    DIR=$(mktemp -d) && cd ${DIR} && \
+    rm -rf ${DIR}
+
+# Build libva-intel-driver
+RUN DIR=$(mktemp -d) && cd ${DIR} && \
     curl -sL https://www.freedesktop.org/software/vaapi/releases/libva-intel-driver/intel-vaapi-driver-${LIBVA_VERSION}.tar.bz2 | \
     tar -jx --strip-components=1 && \
     ./configure && \
     make && make install && \
-    rm -rf ${DIR} && \
-    # Build ffmpeg
-    DIR=$(mktemp -d) && cd ${DIR} && \
+    rm -rf ${DIR}
+
+# Build ffmpeg
+RUN DIR=$(mktemp -d) && cd ${DIR} && \
     curl -sL http://ffmpeg.org/releases/ffmpeg-${TARGET_VERSION}.tar.gz | \
     tar -zx --strip-components=1 && \
     ./configure \
@@ -50,12 +53,12 @@ RUN yum install -y ${BUILD_DEPS} && \
     make && make install && \
     make distclean && \
     hash -r && \
-    # Cleanup build dependencies and temporary files
     rm -rf ${DIR} 
 
-RUN yum history
-RUN yum history -y undo last && \
-    yum clean all
+#RUN yum history
+RUN yum history -y undo last && yum clean all
 
+RUN whereis libva && whereis libva.so.1
+RUN ldd /usr/bin/ffmpeg
 RUN ffmpeg -buildconf
 
