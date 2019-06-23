@@ -1,5 +1,5 @@
 FROM centos:7.3.1611
-MAINTAINER Sho Fuji <pockawoooh@gmail.com>
+MAINTAINER SuperFlyXXI <superflyxxi@yahoo.com>
 
 CMD ["--help"]
 ENTRYPOINT ["ffmpeg"]
