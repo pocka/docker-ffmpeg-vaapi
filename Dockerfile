@@ -14,8 +14,8 @@ ARG PKG_CONFIG_PATH=/usr/lib/pkgconfig
 RUN yum install -y --enablerepo=extras epel-release yum-utils && yum clean all
 
 # Install libdrm
-ARG LIBDRM_VERSION=2.4.80
-RUN yum install -y libdrm libdrm-devel && yum clean all
+ARG LIBDRM_VERSION=2.4.91
+RUN yum install -y libdrm-${LIBDRM_VERSION} libdrm-devel-${LIBDRM_VERSION} && yum clean all
 
 # Install build dependencies
 RUN yum install -y automake autoconf bzip2 cmake freetype-devel gcc gcc-c++ git libtool make mercurial nasm yasm zlib-devel && yum clean all
