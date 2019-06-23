@@ -1,0 +1,14 @@
+language: minimal
+
+git:
+  depth: 1
+
+script:
+  - docker build --tag ffmpeg:${TRAVIS_BRANCH} .
+
+deploy:
+  on:
+    tags: true
+  script:
+    - echo "Deploying ${TRAVIS_BRANCH}"
+
