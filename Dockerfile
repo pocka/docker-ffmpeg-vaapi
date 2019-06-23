@@ -21,6 +21,7 @@ RUN yum install -y libdrm libdrm-devel && yum clean all
 # Install build dependencies
 ARG BUILD_DEPS="automake autoconf bzip2 cmake freetype-devel gcc gcc-c++ git libtool make mercurial nasm yasm zlib-devel"
 RUN yum install -y ${BUILD_DEPS} && \
+    yum clean all && \
     # Build libva
     DIR=$(mktemp -d) && cd ${DIR} && \
     curl -sL https://www.freedesktop.org/software/vaapi/releases/libva/libva-${LIBVA_VERSION}.tar.bz2 | \
@@ -50,9 +51,11 @@ RUN yum install -y ${BUILD_DEPS} && \
     make distclean && \
     hash -r && \
     # Cleanup build dependencies and temporary files
-    rm -rf ${DIR} && \
-#    yum history -y undo last && \
-    yum erase -y ${BUILD_DEPS} && \
-    yum clean all && \
-    ffmpeg -buildconf
+    rm -rf ${DIR} 
+
+RUN yum history
+RUN yum history -y undo last && \
+    yum clean all
+
+RUN ffmpeg -buildconf
 
