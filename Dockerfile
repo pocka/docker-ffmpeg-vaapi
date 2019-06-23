@@ -19,7 +19,7 @@ RUN yum install -y --enablerepo=extras epel-release yum-utils && yum clean all
 RUN yum install -y libdrm libdrm-devel && yum clean all
 
 # Install build dependencies
-ARG BUILD_DEPS="automake autoconf bzip2 cmake freetype-devel gcc gcc-c++ git libtool make mercurial nasm pkgconfig yasm zlib-devel"
+ARG BUILD_DEPS="automake autoconf bzip2 cmake freetype-devel gcc gcc-c++ git libtool make mercurial nasm yasm zlib-devel"
 RUN yum install -y ${BUILD_DEPS} && \
     # Build libva
     DIR=$(mktemp -d) && cd ${DIR} && \
