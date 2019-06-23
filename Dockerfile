@@ -16,9 +16,10 @@ ENV TARGET_VERSION=3.3 \
 RUN yum install -y --enablerepo=extras epel-release yum-utils && yum clean all
 
 # Install libdrm
-RUN yum install -y libdrm libdrm-devel && \
-    # Install build dependencies
-    build_deps="automake autoconf bzip2 \
+RUN yum install -y libdrm libdrm-devel && yum clean all
+
+# Install build dependencies
+RUN build_deps="automake autoconf bzip2 \
                 cmake freetype-devel gcc \
                 gcc-c++ git libtool make \
                 mercurial nasm pkgconfig \
