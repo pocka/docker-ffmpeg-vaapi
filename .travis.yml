@@ -2,7 +2,7 @@ language: minimal
 
 script:
   - docker build --tag ffmpeg:${TRAVIS_BRANCH} .
-  - docker run --rm -t -tffmpeg:${TRAVIS_BRANCH} -buildconf
+  - docker run --rm -t ffmpeg:${TRAVIS_BRANCH} -buildconf
 
 deploy:
   on:
