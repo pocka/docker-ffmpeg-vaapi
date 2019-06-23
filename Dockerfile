@@ -13,9 +13,10 @@ ENV TARGET_VERSION=3.3 \
     SRC=/usr \
     PKG_CONFIG_PATH=/usr/lib/pkgconfig
 
-RUN yum install -y --enablerepo=extras epel-release yum-utils && \
-    # Install libdrm
-    yum install -y libdrm libdrm-devel && \
+RUN yum install -y --enablerepo=extras epel-release yum-utils && yum clean all
+
+# Install libdrm
+RUN yum install -y libdrm libdrm-devel && \
     # Install build dependencies
     build_deps="automake autoconf bzip2 \
                 cmake freetype-devel gcc \
