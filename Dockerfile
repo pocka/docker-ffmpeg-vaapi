@@ -79,6 +79,15 @@ RUN DIR=$(mktemp -d) && cd ${DIR} && \
     make && make install && \
     rm -rf ${DIR}
 
+# Build fdk_aac
+RUN DIR=$(mktemp -d) && cd ${DIR} && \
+    git clone --depth 1 https://github.com/mstorsjo/fdk-aac && \
+    cd fdk-aac && \
+    autoreconf -fiv && \
+    ./configure --prefix="${PREFIX}" --libdir=${LIBDIR} && \
+    make && make install && \
+    rm -rf ${DIR}
+
 # Build ffmpeg
 ARG TARGET_VERSION=3.3
 RUN DIR=$(mktemp -d) && cd ${DIR} && \
