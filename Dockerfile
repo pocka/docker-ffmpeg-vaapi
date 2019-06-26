@@ -11,7 +11,7 @@ ENTRYPOINT ["ffmpeg"]
 ARG PREFIX=/usr
 ARG LIBDIR=/usr/lib64
 ARG PKG_CONFIG_PATH=/usr/lib/pkgconfig
-ENV PATH=${PATH}:${SRC_DIR}/bin/ffmpeg
+ENV PATH=${PATH}:${SRC_DIR}/bin
 
 WORKDIR ${SRC_DIR}
 RUN mkdir -p ${SRC_DIR}/build ${SRC_DIR}/bin
