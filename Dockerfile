@@ -63,6 +63,22 @@ RUN DIR=$(mktemp -d) && cd ${DIR} && \
     make && make install && \
     rm -rf ${DIR}
 
+# Build x264
+RUN DIR=$(mktemp -d) && cd ${DIR} && \
+    git clone --depth 1 https://code.videolan.org/videolan/x264.git && \
+    cd x264 && \
+    ./configure --prefix=${PREFIX} --libdir=${LIBDIR} --bindir=${SRC_DIR}/bin && \
+    make && make install && \
+    rm -rf ${DIR}
+
+# Build x265
+RUN DIR=$(mktemp -d) && cd ${DIR} && \
+    hg clone https://bitbucket.org/multicoreware/x265 && \
+    cd x265/build/linux && \
+    cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="${PREFIX}" -DENABLE_SHARED:bool=off ../../source && \
+    make && make install && \
+    rm -rf ${DIR}
+
 # Build ffmpeg
 ARG TARGET_VERSION=3.3
 RUN DIR=$(mktemp -d) && cd ${DIR} && \
