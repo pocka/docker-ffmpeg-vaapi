@@ -3,13 +3,15 @@
 FROM centos
 MAINTAINER SuperFlyXXI <superflyxxi@yahoo.com>
 
-CMD ["--help"]
-ENTRYPOINT ["ffmpeg"]
-
 ARG SRC_DIR=/work
+
+CMD ["--help"]
+ENTRYPOINT ["${SRC_DIR}/bin/ffmpeg"]
+
 ARG PREFIX=/usr
 ARG LIBDIR=/usr/lib64
 ARG PKG_CONFIG_PATH=/usr/lib/pkgconfig
+ENV PATH=${PATH}:${SRC_DIR}/bin/ffmpeg
 
 WORKDIR ${SRC_DIR}
 RUN mkdir -p ${SRC_DIR}/build ${SRC_DIR}/bin
@@ -67,38 +69,48 @@ RUN DIR=$(mktemp -d) && cd ${DIR} && \
 RUN DIR=$(mktemp -d) && cd ${DIR} && \
     git clone --depth 1 https://code.videolan.org/videolan/x264.git && \
     cd x264 && \
-    ./configure --prefix=${PREFIX} --libdir=${LIBDIR} --bindir=${SRC_DIR}/bin && \
+    PKG_CONFIG_PATH="${SRC_DIR}/build/lib/pkgconfig" ./configure --prefix="${SRC_DIR}/build" --bindir="${SRC_DIR}/bin" --enable-static && \
+#    ./configure --prefix=${PREFIX} --libdir=${LIBDIR} --bindir=${SRC_DIR}/bin && \
     make && make install && \
     rm -rf ${DIR}
 
 # Build x265
-RUN DIR=$(mktemp -d) && cd ${DIR} && \
-    hg clone https://bitbucket.org/multicoreware/x265 && \
-    cd x265/build/linux && \
-    cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="${PREFIX}" -DENABLE_SHARED:bool=off ../../source && \
-    make && make install && \
-    rm -rf ${DIR}
+#RUN DIR=$(mktemp -d) && cd ${DIR} && \
+#    hg clone https://bitbucket.org/multicoreware/x265 && \
+#    cd x265/build/linux && \
+#    cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="${PREFIX}" ../../source && \
+#    make && make install && \
+#    rm -rf ${DIR}
 
 # Build fdk_aac
-RUN DIR=$(mktemp -d) && cd ${DIR} && \
-    git clone --depth 1 https://github.com/mstorsjo/fdk-aac && \
-    cd fdk-aac && \
-    autoreconf -fiv && \
-    ./configure --prefix="${PREFIX}" --libdir=${LIBDIR} && \
-    make && make install && \
-    rm -rf ${DIR}
+#RUN DIR=$(mktemp -d) && cd ${DIR} && \
+##    git clone --depth 1 https://github.com/mstorsjo/fdk-aac && \
+#    cd fdk-aac && \
+#    autoreconf -fiv && \
+#    ./configure --prefix="${PREFIX}" --libdir=${LIBDIR} && \
+#    make && make install && \
+#    rm -rf ${DIR}
 
 # Build ffmpeg
 ARG TARGET_VERSION=snapshot
 RUN DIR=$(mktemp -d) && cd ${DIR} && \
     curl -sL http://ffmpeg.org/releases/ffmpeg-${TARGET_VERSION}.tar.bz2 | \
     tar -jx --strip-components=1 && \
-    ./configure \
-        --prefix=${PREFIX} \
+    PATH="${SRC_DIR}/bin:$PATH" PKG_CONFIG_PATH="${SRC_DIR}/build/lib/pkgconfig" ./configure \
+#        --prefix=${PREFIX} \
+        --prefix="${SRC_DIR}/build" \
+        --pkg-config-flags="--static" \
+        --extra-cflags="-I${SRC_DIR}/build/include" \
+        --extra-ldflags="-L${SRC_DIR}/build/lib" \
+        --extra-libs=-lpthread \
+        --extra-libs=-lm \
+        --bindir="${SRC_DIR}/bin" \
         --enable-small \
         --enable-gpl \
-        --enable-libfdk_aac \
-        --enable-nonfree \
+#        --enable-libfdk_aac \
+#        --enable-nonfree \
+#        --enable-libx265 \
+        --enable-libx264 \
         --enable-vaapi \
         --disable-doc \
         --disable-debug && \
