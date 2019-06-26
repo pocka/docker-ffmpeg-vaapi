@@ -89,14 +89,16 @@ RUN DIR=$(mktemp -d) && cd ${DIR} && \
     rm -rf ${DIR}
 
 # Build ffmpeg
-ARG TARGET_VERSION=3.3
+ARG TARGET_VERSION=snapshot
 RUN DIR=$(mktemp -d) && cd ${DIR} && \
-    curl -sL http://ffmpeg.org/releases/ffmpeg-${TARGET_VERSION}.tar.gz | \
-    tar -zx --strip-components=1 && \
+    curl -sL http://ffmpeg.org/releases/ffmpeg-${TARGET_VERSION}.tar.bz2 | \
+    tar -jx --strip-components=1 && \
     ./configure \
         --prefix=${PREFIX} \
         --enable-small \
         --enable-gpl \
+        --enable-libfdk_aac \
+        --enable-nonfree \
         --enable-vaapi \
         --disable-doc \
         --disable-debug && \
