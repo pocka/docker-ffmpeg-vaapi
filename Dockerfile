@@ -6,7 +6,7 @@ MAINTAINER SuperFlyXXI <superflyxxi@yahoo.com>
 ARG SRC_DIR=/work
 
 CMD ["--help"]
-ENTRYPOINT ["${SRC_DIR}/bin/ffmpeg"]
+ENTRYPOINT ["ffmpeg"]
 
 ARG PREFIX=/usr
 ARG LIBDIR=/usr/lib64
@@ -75,12 +75,13 @@ RUN DIR=$(mktemp -d) && cd ${DIR} && \
     rm -rf ${DIR}
 
 # Build x265
-#RUN DIR=$(mktemp -d) && cd ${DIR} && \
-#    hg clone https://bitbucket.org/multicoreware/x265 && \
-#    cd x265/build/linux && \
+RUN DIR=$(mktemp -d) && cd ${DIR} && \
+    hg clone https://bitbucket.org/multicoreware/x265 && \
+    cd x265/build/linux && \
 #    cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="${PREFIX}" ../../source && \
-#    make && make install && \
-#    rm -rf ${DIR}
+     cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="${SRC_DIR}/build" -DENABLE_SHARED:bool=off ../../source && \
+    make && make install && \
+    rm -rf ${DIR}
 
 # Build fdk_aac
 #RUN DIR=$(mktemp -d) && cd ${DIR} && \
@@ -104,12 +105,12 @@ RUN DIR=$(mktemp -d) && cd ${DIR} && \
         --extra-ldflags="-L${SRC_DIR}/build/lib" \
         --extra-libs=-lpthread \
         --extra-libs=-lm \
-        --bindir="${SRC_DIR}/bin" \
+        --bindir="${PREFIX}/bin" \
         --enable-small \
         --enable-gpl \
 #        --enable-libfdk_aac \
 #        --enable-nonfree \
-#        --enable-libx265 \
+        --enable-libx265 \
         --enable-libx264 \
         --enable-vaapi \
         --disable-doc \
