@@ -82,13 +82,13 @@ RUN DIR=$(mktemp -d) && cd ${DIR} && \
     rm -rf ${DIR}
 
 # Build fdk_aac
-#RUN DIR=$(mktemp -d) && cd ${DIR} && \
-##    git clone --depth 1 https://github.com/mstorsjo/fdk-aac && \
-#    cd fdk-aac && \
-#    autoreconf -fiv && \
-#    ./configure --prefix="${PREFIX}" --libdir=${LIBDIR} && \
-#    make && make install && \
-#    rm -rf ${DIR}
+RUN DIR=$(mktemp -d) && cd ${DIR} && \
+    git clone --depth 1 https://github.com/mstorsjo/fdk-aac && \
+    cd fdk-aac && \
+    autoreconf -fiv && \
+    ./configure --prefix="${SRC_DIR}/build" --disable-shared && \
+    make && make install && \
+    rm -rf ${DIR}
 
 # Build ffmpeg
 ARG TARGET_VERSION=snapshot
@@ -108,6 +108,7 @@ RUN DIR=$(mktemp -d) && cd ${DIR} && \
         --enable-libx265 \
         --enable-libx264 \
         --enable-vaapi \
+        --enable-libfdk_aac --enable-nonfree \
         --disable-doc \
         --disable-debug && \
     make && make install && \
