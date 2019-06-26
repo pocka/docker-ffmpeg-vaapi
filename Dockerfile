@@ -50,7 +50,8 @@ RUN DIR=$(mktemp -d) && cd ${DIR} && \
     curl -sL "https://www.nasm.us/pub/nasm/releasebuilds/${NASM_VERSION}/nasm-${NASM_VERSION}.tar.bz2" | \
     tar -jx --strip-components=1 && \
     ./autogen.sh && \
-    ./configure --prefix="${SRC_DIR}/build" --bindir="${SRC_DIR}/bin" && \
+#    ./configure --prefix="${SRC_DIR}/build" --bindir="${SRC_DIR}/bin" && \
+    ./configure --prefix="/usr" --libdir="/usr/lib64" && \
     make && make install && \
     rm -rf ${DIR}
 
@@ -59,7 +60,8 @@ ARG YASM_VERSION=1.3.0
 RUN DIR=$(mktemp -d) && cd ${DIR} && \
     curl -sL "https://www.tortall.net/projects/yasm/releases/yasm-${YASM_VERSION}.tar.gz" | \
     tar -zx --strip-components=1 && \
-    ./configure --prefix="${SRC_DIR}/build" --bindir="${SRC_DIR}/bin" && \
+    #./configure --prefix="${SRC_DIR}/build" --bindir="${SRC_DIR}/bin" && \
+    ./configure --prefix="/usr" --libdir="/usr/lib64" && \
     make && make install && \
     rm -rf ${DIR}
 
