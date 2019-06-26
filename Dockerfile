@@ -54,6 +54,15 @@ RUN DIR=$(mktemp -d) && cd ${DIR} && \
     make && make install && \
     rm -rf ${DIR}
 
+# Build yasm
+ARG YASM_VERSION=1.3.0
+RUN DIR=$(mktemp -d) && cd ${DIR} && \
+    curl -sL "https://www.tortall.net/projects/yasm/releases/yasm-${YASM_VERSION}.tar.gz" | \
+    tar -zx --strip-components=1 && \
+    ./configure --prefix=${PREFIX} --libdir=${LIBDIR} && \
+    make && make install && \
+    rm -rf ${DIR}
+
 # Build ffmpeg
 ARG TARGET_VERSION=3.3
 RUN DIR=$(mktemp -d) && cd ${DIR} && \
