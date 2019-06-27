@@ -90,6 +90,14 @@ RUN DIR=$(mktemp -d) && cd ${DIR} && \
     make && make install && \
     rm -rf ${DIR}
 
+# Build libvpx
+RUN DIR=$(mktemp -d) && cd ${DIR} && \
+    git clone --depth 1 https://chromium.googlesource.com/webm/libvpx.git && \
+    cd libvpx && \
+    ./configure --prefix="${SRC_DIR}/build" --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=yasm && \
+    make && make install && \
+    rm -rf ${DIR}
+
 # Build ffmpeg
 ARG TARGET_VERSION=snapshot
 RUN DIR=$(mktemp -d) && cd ${DIR} && \
@@ -109,6 +117,7 @@ RUN DIR=$(mktemp -d) && cd ${DIR} && \
         --enable-libx264 \
         --enable-vaapi \
         --enable-libfdk_aac --enable-nonfree \
+        --enable-libvpx \
         --disable-doc \
         --disable-debug && \
     make && make install && \
