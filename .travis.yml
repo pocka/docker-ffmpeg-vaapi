@@ -3,6 +3,8 @@ language: minimal
 script:
   - docker build --tag ffmpeg:${TRAVIS_BRANCH} .
   - docker run --rm -t ffmpeg:${TRAVIS_BRANCH} -buildconf
+  - docker tag ffmpeg:${TRAVIS_BRANCH} ffmpeg:test
+  - bash runtests.sh
 
 deploy:
   on:
